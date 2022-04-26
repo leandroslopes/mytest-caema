@@ -4,15 +4,15 @@ mytest-caema - Esta aplicação serve para validar meus conhecimentos nas variad
 
 ## Technologies
 
-* Vue.js
-* Vuetify
-* Vuex
-* Vue Router
+* [Vue.js](https://vuejs.org/ "Vue.js")
+* [Vuetify](https://vuetifyjs.com/en/ "Vuetify")
+* [Vuex](https://vuex.vuejs.org/ "Vuex")
+* [Vue Router](https://router.vuejs.org/ "VueRouter")
 * API's Diversas
-* HTML/CSS
-* JavaScript
-* Node.js
-* Controle de versão (git)
+* [HTML/CSS](https://www.w3schools.com/ "HTML/CSS")
+* [JavaScript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript "JavaScript")
+* [Node.js](https://nodejs.org/en/ "José.js")
+* [Git](https://git-scm.com/ "Git")
 
 ## Project setup
 ```
