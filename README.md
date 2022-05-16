@@ -1,4 +1,4 @@
-# mytest-caema [![em construção ](https://img.shields.io/badge/em_construção_-2ea44f)](https://)
+# mytest-caema [![](https://img.shields.io/badge/building_-2ea44f)](https://)
 
 mytest-caema - Esta aplicação serve para validar meus conhecimentos nas variadas ferramentas encontradas no ecossistema Vue.js (Vue.js, VueCli, Vuetify, Vuex, VueRouter).
 
