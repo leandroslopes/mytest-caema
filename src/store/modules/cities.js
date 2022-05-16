@@ -7,23 +7,16 @@ const cities = {
     }, 
     mutations: {
         SET_CITIES(state, data) {
-            var arrCities = []
-            data.forEach(c => {
-                var city = {
-                    id: "", nameCity: "", 
-                    idMicro: "", nameMicro: "", 
-                    idMeso: "", nameMeso: ""
-                }
-                city.id = c.id
-                city.nameCity = c.nome
-                city.idMicro = c.microrregiao.id 
-                city.nameMicro = c.microrregiao.nome
-                city.idMeso = c.microrregiao.mesorregiao.id
-                city.nameMeso = c.microrregiao.mesorregiao.nome
-            
-                arrCities.push(city)
+            state.cities = data.map(c => {
+                return {
+                    id: c.id,
+                    nameCity: c.nome,
+                    idMicro: c.microrregiao.id, 
+                    nameMicro: c.microrregiao.nome,
+                    idMeso: c.microrregiao.mesorregiao.id,
+                    nameMeso: c.microrregiao.mesorregiao.nome
+                }           
             });
-            state.cities = arrCities
         }
     },
     actions: {
