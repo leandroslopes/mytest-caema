@@ -12,7 +12,7 @@
             :items="cmbCitiesItems"
             item-value="value"
             item-text="text"
-            :return-object="false"
+            :return-object="true"
             hint="Máximo de 5 municípios"
             label="Selecione os munípicios"
             clearable
@@ -28,7 +28,7 @@
                 :disabled="data.disabled"
                 @click:close="data.parent.selectItem(data.item)"
               >
-                {{ data.item }}
+                {{ data.item.text }}
               </v-chip>
             </template>
           </v-combobox>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from '@/services/api'
 import { mapState } from 'vuex'
 
 import BarChart from '../components/chart/BarChart.vue'
@@ -92,7 +92,6 @@ export default {
       cmbCitiesItems: [],
       selDecades: '',
       selNames: '',
-      arrCities: [],
       decades: [],
       decade: 0,
       names: [],
@@ -139,8 +138,7 @@ export default {
     },
     async popularSelectNames() {
       this.names = []
-      let request = `https://servicodados.ibge.gov.br/api/v2/censos/nomes/ranking/?decada=${this.selDecades}`
-      const { data } = await axios.get(request)
+      const { data } = await axios.get(`/ranking/?decada=${this.selDecades}`)
       data.forEach(d => {
         for (const key in d.res) {
           this.names.push(d.res[key]['nome'])
@@ -150,10 +148,44 @@ export default {
     popularComboboxCities() {
       this.cmbCitiesItems = []
       this.$store.state.cities.cities.forEach(city => {
-        if (city.nameCity !== "Imperatriz" || city.nameCity !== "São Luís") {
-          this.cmbCitiesItems.push({text: city.nameCity, id: city.id})
+        if (city.nameCity !== "Imperatriz" && city.nameCity !== "São Luís") {
+          this.cmbCitiesItems.push({value: city.id, text: city.nameCity})
         }
       })
+    },
+    popularChartData() {
+      let citiesAndNameFrequency = [
+        {id: 2111300, city: 'São Luís', nameFrequency: 0}, 
+        {id: 2105302, city: 'Imperatriz', nameFrequency: 0}
+      ]
+
+      this.cmbCities.forEach(c => {
+        citiesAndNameFrequency.push({id: Number(c.value), city: c.text, nameFrequency: 0})
+      })
+      
+      for (const c of citiesAndNameFrequency) {
+        this.getNamesFrequency(c.id)
+          .then(nameFrequency => {
+            if (nameFrequency.length != 0) {
+              for (const nf of nameFrequency[0].res) {
+                // Period example: [1930,1940[
+                if (nf.periodo === `[${this.selDecades},${this.selDecades + 10}[`) {
+                  //console.log(c.id, nf.frequencia)
+                  let cityIndex = citiesAndNameFrequency.findIndex((obj => obj.id === c.id))
+                  citiesAndNameFrequency[cityIndex].nameFrequency = nf.frequencia
+                }
+              }
+            }
+          })
+      }
+
+      this.chartData.datasets[0].backgroundColor = '#1976d2'
+      this.chartData.datasets[0].data = citiesAndNameFrequency.map(({ nameFrequency }) => nameFrequency)
+      this.chartData.datasets[0].label = `${this.selNames} (DÉCADA: ${this.selDecades})`
+      this.chartData.labels = citiesAndNameFrequency.map(({ city }) => city)
+    },
+    getNamesFrequency(idCity) {
+      return axios.get(`/${this.selNames}?localidade=${idCity}`).then(response => response.data)
     },
     renderCharts() {
       this.chartData = {
@@ -165,10 +197,7 @@ export default {
         }]
       };
 
-      this.chartData.labels = ['jan', 'fev']
-      this.chartData.datasets[0].label = `${this.selNames} (DÉCADA: ${this.selDecades})`
-      this.chartData.datasets[0].backgroundColor = '#1976d2'
-      this.chartData.datasets[0].data = [5, 15]
+      this.popularChartData()
       
       this.showCharts = true
     }
