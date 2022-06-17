@@ -13,7 +13,7 @@ mytest-caema - Esta aplicação serve para validar meus conhecimentos nas variad
 * [Vuetify](https://vuetifyjs.com/en/ "Vuetify")
 * [Vuex](https://vuex.vuejs.org/ "Vuex")
 * [Vue Router](https://router.vuejs.org/ "VueRouter")
-* [ChartKick]((https://chartkick.com/vue) "ChartKick")
+* [ChartKick](https://chartkick.com/vue "ChartKick")
 * [API](https://www.redhat.com/pt-br/topics/api/what-is-a-rest-api "API")
 * [HTML/CSS](https://www.w3schools.com/ "HTML/CSS")
 * [JavaScript](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript "JavaScript")
