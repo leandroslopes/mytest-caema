@@ -58,18 +58,22 @@
           ></v-select>
         </v-col>
       </v-row>
-    </v-container>
+    </v-container> <br />
     <div class="charts" v-show="showCharts">
       <v-row>
         <v-col
-          cols="12"
+          cols="6"
           lg="6"
           sm="6"
         >
-          <BarChart
-            :chartData="chartData"
-            :chartOptions="chartOptions"
-          />
+          <column-chart :data="charData"></column-chart>
+        </v-col>
+        <v-col
+          cols="6"
+          lg="6"
+          sm="6"
+        >
+          <line-chart :data="charData" :colors="['#95190C']"></line-chart>
         </v-col>
       </v-row>
     </div>
@@ -80,13 +84,8 @@
 import axios from '@/services/api'
 import { mapState } from 'vuex'
 
-import BarChart from '../components/chart/BarChart.vue'
-
 export default {
   name: "Dashboard",
-  components: {
-    BarChart
-  },
   data: () => ({
       cmbCities: '',
       cmbCitiesItems: [],
@@ -98,20 +97,7 @@ export default {
       name: '',
       search: '',
       showCharts: false,
-      chartData: {
-        labels: [],
-        datasets: [
-          { 
-            label: '',
-            backgroundColor: '#1976d2', 
-            data: [] 
-          }
-        ]
-      },
-      chartOptions: {
-        responsive: true,
-        maintainAspectRatio: false
-      }
+      charData: []
   }),
   watch: {
     cmbCities(val) {
@@ -153,53 +139,50 @@ export default {
         }
       })
     },
-    popularChartData() {
+    async getChartData() {
       let citiesAndNameFrequency = [
         {id: 2111300, city: 'São Luís', nameFrequency: 0}, 
         {id: 2105302, city: 'Imperatriz', nameFrequency: 0}
-      ]
+      ];
 
       this.cmbCities.forEach(c => {
         citiesAndNameFrequency.push({id: Number(c.value), city: c.text, nameFrequency: 0})
-      })
-      
+      });
+
       for (const c of citiesAndNameFrequency) {
-        this.getNamesFrequency(c.id)
-          .then(nameFrequency => {
-            if (nameFrequency.length != 0) {
-              for (const nf of nameFrequency[0].res) {
-                // Period example: [1930,1940[
-                if (nf.periodo === `[${this.selDecades},${this.selDecades + 10}[`) {
-                  //console.log(c.id, nf.frequencia)
-                  let cityIndex = citiesAndNameFrequency.findIndex((obj => obj.id === c.id))
-                  citiesAndNameFrequency[cityIndex].nameFrequency = nf.frequencia
-                }
-              }
+        let index = citiesAndNameFrequency.findIndex(city => city.id == c.id);
+        
+        let nameFrenquecy = await this.getNamesFrequency(c.id);
+        if (typeof nameFrenquecy === 'object') {        
+          for (const nf of nameFrenquecy.res) {
+            // Period example: [1930,1940[
+            if (nf.periodo === `[${this.selDecades},${this.selDecades + 10}[`) {
+              citiesAndNameFrequency[index].nameFrequency = nf.frequencia;    
             }
-          })
+          }
+        } else { // IF NAMEFREQUENCY IS UNDEFINED
+          citiesAndNameFrequency[index].nameFrequency = 0;
+        }
       }
-
-      this.chartData.datasets[0].backgroundColor = '#1976d2'
-      this.chartData.datasets[0].data = citiesAndNameFrequency.map(({ nameFrequency }) => nameFrequency)
-      this.chartData.datasets[0].label = `${this.selNames} (DÉCADA: ${this.selDecades})`
-      this.chartData.labels = citiesAndNameFrequency.map(({ city }) => city)
-    },
-    getNamesFrequency(idCity) {
-      return axios.get(`/${this.selNames}?localidade=${idCity}`).then(response => response.data)
-    },
-    renderCharts() {
-      this.chartData = {
-        labels: [],
-        datasets: [{
-          label: '',
-          backgroundColor: '#1976d2',
-          data: []
-        }]
-      };
-
-      this.popularChartData()
       
-      this.showCharts = true
+      return citiesAndNameFrequency;
+    },
+    async getNamesFrequency(idCity) {
+      let response = await axios.get(`/${this.selNames}?localidade=${idCity}`);
+      let nameFrequencies = await response.data[0];
+      return nameFrequencies;
+    },
+    async renderCharts() {
+      let chartDataTemp = await this.getChartData();
+
+      let chartDataArray = [];
+      await chartDataTemp.forEach(function (c) {
+        chartDataArray.push([c.city, c.nameFrequency]);
+      });
+
+      this.charData = chartDataArray;
+
+      this.showCharts = true;
     }
   }
 };
