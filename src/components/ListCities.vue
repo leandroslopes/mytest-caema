@@ -17,7 +17,7 @@
     </v-row> <br />
     <v-data-table
       :headers="headers"
-      :items="cities.cities"
+      :items="cities"
       :search ="search"
       class="elevation-2"
     >
@@ -106,10 +106,11 @@ export default {
         }
       }
   },
+  created() {
+    this.$store.dispatch('cities/load');
+  },
   computed: {
-    ...mapState([
-      'cities'
-    ])
+    ...mapState('cities', ['cities'])
   },
   watch: {
       dialog (val) {
@@ -117,7 +118,7 @@ export default {
       }
   },
   mounted() {
-    //this.$store.dispatch('cities/load')
+    
   },
   methods: {
     close () {

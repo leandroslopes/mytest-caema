@@ -9,7 +9,7 @@
         >
           <v-combobox
             v-model="cmbCities"
-            :items="cmbCitiesItems"
+            :items="cities_combox"
             item-value="value"
             item-text="text"
             :return-object="true"
@@ -88,7 +88,6 @@ export default {
   name: "Dashboard",
   data: () => ({
       cmbCities: '',
-      cmbCitiesItems: [],
       selDecades: '',
       selNames: '',
       decades: [],
@@ -99,22 +98,19 @@ export default {
       showCharts: false,
       charData: []
   }),
+  computed: {
+    ...mapState('cities_combox', ['cities_combox'])
+  },
+  created() {
+    this.$store.dispatch('cities_combox/load');
+    this.popularSelectDecades();
+  },
   watch: {
     cmbCities(val) {
       if (val.length > 5) {
         this.$nextTick(() => this.cmbCities.pop())
       }
     },
-  },
-  computed: {
-    ...mapState([
-      'cities'
-    ])
-  },
-  mounted() {
-    this.$store.dispatch('cities/load')
-    this.popularComboboxCities()
-    this.popularSelectDecades()
   },
   methods: {
     popularSelectDecades() {
@@ -130,14 +126,6 @@ export default {
           this.names.push(d.res[key]['nome'])
         }
       });
-    },
-    popularComboboxCities() {
-      this.cmbCitiesItems = []
-      this.$store.state.cities.cities.forEach(city => {
-        if (city.nameCity !== "Imperatriz" && city.nameCity !== "São Luís") {
-          this.cmbCitiesItems.push({value: city.id, text: city.nameCity})
-        }
-      })
     },
     async getChartData() {
       let citiesAndNameFrequency = [

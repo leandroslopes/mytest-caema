@@ -1,20 +1,16 @@
 import axios from "axios"
 
-const cities = {
+const cities_combox = {
     namespaced: true,
     state: {
-        cities: []
+        cities_combox: []
     }, 
     mutations: {
         SET_CITIES(state, data) {
-            state.cities = data.map(c => {
+            state.cities_combox = data.map(c => {
                 return {
-                    id: c.id,
-                    nameCity: c.nome,
-                    idMicro: c.microrregiao.id, 
-                    nameMicro: c.microrregiao.nome,
-                    idMeso: c.microrregiao.mesorregiao.id,
-                    nameMeso: c.microrregiao.mesorregiao.nome
+                    value: c.id,
+                    text: c.nome
                 }           
             });
         }
@@ -31,4 +27,4 @@ const cities = {
     }
 }
 
-export default cities
+export default cities_combox
