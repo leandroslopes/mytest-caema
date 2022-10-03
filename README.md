@@ -1,10 +1,10 @@
-# mytest-caema
+# My Test - CAEMA
 
 mytest-caema - Esta aplicação serve para validar meus conhecimentos nas variadas ferramentas encontradas no ecossistema Vue.js (Vue.js, VueCli, Vuetify, Vuex, VueRouter).
 
 ## Demo
 
-* [MyTest-CAEMA](https://whimsical-heliotrope-fa5284.netlify.app/#/ "Demo")
+* [My Test - CAEMA](https://mytestcaema.netlify.app/#/ "My Test - CAEMA")
 
 ## Screens
 
